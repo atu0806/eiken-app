@@ -1,0 +1,591 @@
+{
+  "version": 1,
+  "words": [
+    {
+      "id": 1791546042726,
+      "num": 1,
+      "en": "plant",
+      "ja": "を植える",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546042727,
+      "num": 2,
+      "en": "describe",
+      "ja": "を描写する",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791546634686.5505,
+      "num": 3,
+      "en": "hurt",
+      "ja": "を傷つける",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791546634686.833,
+      "num": 4,
+      "en": "invite",
+      "ja": "を招待する",
+      "wrong": 1,
+      "attempts": 2,
+      "correct": 1
+    },
+    {
+      "id": 1791546634686.0647,
+      "num": 5,
+      "en": "offer",
+      "ja": "AにBを申し出る",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546634686.5166,
+      "num": 6,
+      "en": "repair",
+      "ja": "修理する",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546634686.191,
+      "num": 7,
+      "en": "garbage",
+      "ja": "生ゴミ",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791546634686.7356,
+      "num": 8,
+      "en": "customer",
+      "ja": "顧客",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546634686.173,
+      "num": 9,
+      "en": "few",
+      "ja": "ほとんどない",
+      "wrong": 2,
+      "attempts": 2,
+      "correct": 0
+    },
+    {
+      "id": 1791546634686.4011,
+      "num": 10,
+      "en": "instead",
+      "ja": "その代わりに",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546634686.158,
+      "num": 11,
+      "en": "even",
+      "ja": "～でさえ",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546634686.6587,
+      "num": 12,
+      "en": "probably",
+      "ja": "多分",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546634686.9907,
+      "num": 13,
+      "en": "actually",
+      "ja": "実際に",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546634686.6812,
+      "num": 14,
+      "en": "anyway",
+      "ja": "とにかく",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791546634686.1255,
+      "num": 101,
+      "en": "allow",
+      "ja": "Oが～するのを許す",
+      "wrong": 0,
+      "attempts": 3,
+      "correct": 3
+    },
+    {
+      "id": 1791547622417.6184,
+      "num": 102,
+      "en": "suggest",
+      "ja": "を提案する",
+      "wrong": 1,
+      "attempts": 1,
+      "correct": 0
+    },
+    {
+      "id": 1791547622417.1882,
+      "num": 103,
+      "en": "attract",
+      "ja": "の心をとらえる",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791547622417.1257,
+      "num": 104,
+      "en": "recommend",
+      "ja": "を推薦する",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791547622417.045,
+      "num": 105,
+      "en": "serve",
+      "ja": "（飲食物）を出す",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791547622417.8694,
+      "num": 106,
+      "en": "seem",
+      "ja": "～のようだ",
+      "wrong": 1,
+      "attempts": 2,
+      "correct": 1
+    },
+    {
+      "id": 1791547622417.3113,
+      "num": 107,
+      "en": "cause",
+      "ja": "引き起こす",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791547949436.3115,
+      "num": 108,
+      "en": "throw",
+      "ja": "投げる",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791547949436.834,
+      "num": 109,
+      "en": "notice",
+      "ja": "気づく",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791547949436.8284,
+      "num": 110,
+      "en": "meal",
+      "ja": "食事",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791547949436.2637,
+      "num": 111,
+      "en": "seed",
+      "ja": "種",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791547949436.7217,
+      "num": 112,
+      "en": "land",
+      "ja": "陸地",
+      "wrong": 0,
+      "attempts": 2,
+      "correct": 2
+    },
+    {
+      "id": 1791547949436.416,
+      "num": 113,
+      "en": "insect",
+      "ja": "虫",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791547949436.0198,
+      "num": 114,
+      "en": "prize",
+      "ja": "賞",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.5137,
+      "num": 115,
+      "en": "124without",
+      "ja": "~なしで「の」",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.9387,
+      "num": 116,
+      "en": "afraid",
+      "ja": "心配して",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.091,
+      "num": 117,
+      "en": "past",
+      "ja": "過去の",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.022,
+      "num": 118,
+      "en": "avaiable",
+      "ja": "入手できる",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.9658,
+      "num": 119,
+      "en": "else",
+      "ja": "その他に",
+      "wrong": 1,
+      "attempts": 1,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.544,
+      "num": 120,
+      "en": "abroad",
+      "ja": "海外へ",
+      "wrong": 1,
+      "attempts": 1,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.973,
+      "num": 121,
+      "en": "recently",
+      "ja": "最近",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.0886,
+      "num": 122,
+      "en": "nowadays",
+      "ja": "今日では",
+      "wrong": 1,
+      "attempts": 1,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.8997,
+      "num": 123,
+      "en": "although",
+      "ja": "…だけれども",
+      "wrong": 1,
+      "attempts": 1,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.1462,
+      "num": 125,
+      "en": "through",
+      "ja": "～を通って",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.2712,
+      "num": 201,
+      "en": "exchange",
+      "ja": "を交換する",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.9053,
+      "num": 202,
+      "en": "smell",
+      "ja": "においがする",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.5771,
+      "num": 203,
+      "en": "feed",
+      "ja": "食べ物を与える",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.8562,
+      "num": 204,
+      "en": "spread",
+      "ja": "広がる",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.2378,
+      "num": 205,
+      "en": "introduce",
+      "ja": "紹介する",
+      "wrong": 0,
+      "attempts": 0,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.4111,
+      "num": 206,
+      "en": "produce",
+      "ja": "生産する",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.4214,
+      "num": 207,
+      "en": "wood",
+      "ja": "木材",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.4727,
+      "num": 208,
+      "en": "bill",
+      "ja": "請求書",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.723,
+      "num": 209,
+      "en": "dessert",
+      "ja": "デザート",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.728,
+      "num": 210,
+      "en": "instrument",
+      "ja": "器具",
+      "wrong": 0,
+      "attempts": 0,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.0168,
+      "num": 211,
+      "en": "suit",
+      "ja": "スーツ",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.8215,
+      "num": 212,
+      "en": "crowd",
+      "ja": "群衆",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.735,
+      "num": 213,
+      "en": "direction",
+      "ja": "方向",
+      "wrong": 0,
+      "attempts": 0,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.8962,
+      "num": 214,
+      "en": "wallet",
+      "ja": "財布",
+      "wrong": 0,
+      "attempts": 0,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.1775,
+      "num": 215,
+      "en": "cheap",
+      "ja": "安い",
+      "wrong": 1,
+      "attempts": 1,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.5806,
+      "num": 216,
+      "en": "either",
+      "ja": "(2者のうち）どちらか（一方）の",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.1924,
+      "num": 217,
+      "en": "whole",
+      "ja": "全体の",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.186,
+      "num": 218,
+      "en": "loud",
+      "ja": "（声や音が大きい）",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.4565,
+      "num": 219,
+      "en": "pretty",
+      "ja": "なかなか",
+      "wrong": 0,
+      "attempts": 0,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.245,
+      "num": 220,
+      "en": "certainly",
+      "ja": "もちろんです",
+      "wrong": 2,
+      "attempts": 2,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.9604,
+      "num": 221,
+      "en": "finally",
+      "ja": "ついに",
+      "wrong": 0,
+      "attempts": 0,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.662,
+      "num": 222,
+      "en": "alone",
+      "ja": "一人で",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.7173,
+      "num": 223,
+      "en": "therefore",
+      "ja": "それゆえに",
+      "wrong": 0,
+      "attempts": 0,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.1343,
+      "num": 224,
+      "en": "lately",
+      "ja": "最近、近ごろ",
+      "wrong": 1,
+      "attempts": 1,
+      "correct": 0
+    },
+    {
+      "id": 1791595901497.7432,
+      "num": 225,
+      "en": "might",
+      "ja": "~かもしれない",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    },
+    {
+      "id": 1791595901497.372,
+      "num": 301,
+      "en": "stand",
+      "ja": "を我慢する",
+      "wrong": 0,
+      "attempts": 1,
+      "correct": 1
+    }
+  ],
+  "stats": {
+    "answered": 77,
+    "correct": 64
+  },
+  "study": {
+    "days": {
+      "2026-10-10": 270
+    },
+    "startedAt": null
+  }
+}
