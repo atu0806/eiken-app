@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英検パス単クイズ</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Meiryo", sans-serif;
+  background: #f2f5fb;
+  color: #263248;
+}
+
+header {
+  background: #344fc1;
+  color: white;
+  padding: 22px 16px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0 0 8px;
+}
+
+header p {
+  margin: 0;
+}
+
+main {
+  max-width: 900px;
+  margin: auto;
+  padding: 16px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px #0000000c;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+input, select, textarea, button {
+  font: inherit;
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border-radius: 8px;
+}
+
+input, select, textarea {
+  border: 1px solid #cbd2e2;
+  background: white;
+}
+
+textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+button {
+  border: none;
+  background: #405bd0;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.88;
+}
+
+button.secondary {
+  background: #e8ecfb;
+  color: #344fc1;
+}
+
+button.danger {
+  background: #c74444;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stat {
+  background: #f0f3ff;
+  border-radius: 10px;
+  text-align: center;
+  padding: 14px 6px;
+}
+
+.stat strong {
+  display: block;
+  color: #344fc1;
+  font-size: 23px;
+  margin-top: 6px;
+}
+
+.small {
+  font-size: 13px;
+  color: #647087;
+  line-height: 1.7;
+}
+
+#quizArea {
+  display: none;
+}
+
+#question {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  overflow-wrap: anywhere;
+  margin: 28px 0;
+}
+
+#questionInfo {
+  text-align: center;
+  color: #647087;
+}
+
+.answerButton {
+  background: #eef1ff;
+  color: #263248;
+  text-align: left;
+  border: 1px solid #dce2ff;
+  margin-bottom: 8px;
+}
+
+#feedback {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 15px 0;
+  white-space: pre-wrap;
+}
+
+.wordItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e8f0;
+  overflow-wrap: anywhere;
+}
+
+.wordItem button {
+  margin-top: 8px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 550px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  #question {
+    font-size: 25px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📚 英検パス単クイズ</h1>
+  <p>単語を覚えて、合格を目指そう！</p>
+</header>
+
+<main>
+
+  <section class="card">
+    <h2>📊 学習成績</h2>
+
+    <div class="stats">
+      <div class="stat">
+        登録単語数
+        <strong id="totalWords">0</strong>
+      </div>
+
+      <div class="stat">
+        正答率
+        <strong id="accuracy">0%</strong>
+      </div>
+
+      <div class="stat">
+        間違えた単語
+        <strong id="wrongCount">0</strong>
+      </div>
+    </div>
+
+    <p class="small">
+      正答率は、これまでのテストの正解数をもとに計算するよ。
+    </p>
+  </section>
+
+
+  <section class="card">
+    <h2>⏱️ 学習時間</h2>
+
+    <div class="stats">
+      <div class="stat">
+        今日の学習時間
+        <strong id="todayTime">0分</strong>
+      </div>
+
+      <div class="stat">
+        累計学習時間
+        <strong id="totalTime">0分</strong>
+      </div>
+
+      <div class="stat">
+        現在の計測
+        <strong id="liveTime">停止中</strong>
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="startTimer">▶ 学習開始</button>
+      <button id="stopTimer" class="secondary">■ 学習終了</button>
+    </div>
+
+    <p class="small">
+      学習開始を押して、勉強が終わったら学習終了を押そう。
+      計測中にページを閉じても、次に開いたときに続きから計算するよ。
+    </p>
+
+    <h3>最近の学習履歴</h3>
+    <div id="history" class="small">まだ履歴はありません。</div>
+  </section>
+
+
+  <section class="card">
+    <h2>➕ 単語を登録</h2>
+
+    <label for="wordNumber">パス単の番号</label>
+    <input id="wordNumber" type="number" min="1" placeholder="例：1">
+
+    <label for="english">英単語</label>
+    <input id="english" placeholder="例：important">
+
+    <label for="japanese">日本語の意味</label>
+    <input id="japanese" placeholder="例：重要な">
+
+    <button id="addWord">単語を登録</button>
+
+    <p id="addMessage" class="small"></p>
+  </section>
+
+
+  <section class="card">
+    <h2>📝 単語をまとめて登録</h2>
+
+    <p class="small">
+      1行に1単語ずつ入力してね。<br>
+      書き方：番号,英単語,日本語<br><br>
+      例：<br>
+      1,important,重要な<br>
+      2,improve,改善する<br>
+      3,experience,経験
+    </p>
+
+    <textarea id="bulkInput"
+      placeholder="1,important,重要な&#10;2,improve,改善する&#10;3,experience,経験"></textarea>
+
+    <button id="bulkAdd">まとめて登録</button>
+
+    <p id="bulkMessage" class="small"></p>
+  </section>
+
+
+  <section class="card">
+    <h2>🎯 テストを設定</h2>
+
+    <label for="rangeType">出題する範囲</label>
+    <select id="rangeType">
+      <option value="100">100語ずつ</option>
+      <option value="50">50語ずつ</option>
+      <option value="all">全単語まとめて</option>
+      <option value="wrong">間違えた単語だけ</option>
+    </select>
+
+    <label for="rangeStart">テストする番号の範囲</label>
+    <select id="rangeStart">
+      <option value="1">1〜100</option>
+    </select>
+
+    <label for="testMode">出題形式</label>
+    <select id="testMode">
+      <option value="choice">4択テスト</option>
+      <option value="typing">記述テスト</option>
+    </select>
+
+    <label for="direction">出題方向</label>
+    <select id="direction">
+      <option value="en-ja">英語 → 日本語</option>
+      <option value="ja-en">日本語 → 英語</option>
+    </select>
+
+    <label for="questionOrder">問題の順番</label>
+    <select id="questionOrder">
+      <option value="random">シャッフル</option>
+      <option value="number">番号順</option>
+    </select>
+
+    <button id="startQuiz">テスト開始！</button>
+
+    <p id="rangeMessage" class="small"></p>
+  </section>
+
+
+  <section id="quizArea" class="card">
+    <h2>✏️ テスト中</h2>
+
+    <div id="questionInfo"></div>
+    <div id="question"></div>
+
+    <div id="choiceArea"></div>
+
+    <div id="typingArea" class="hidden">
+      <input id="typedAnswer" placeholder="答えを入力">
+      <button id="submitAnswer">回答する</button>
+    </div>
+
+    <div id="feedback"></div>
+
+    <button id="nextQuestion" class="hidden">次の問題へ →</button>
+    <button id="endQuiz" class="secondary">テストを終了する</button>
+  </section>
+
+
+  <section class="card">
+    <h2>📖 登録した単語</h2>
+
+    <input id="searchWord" placeholder="番号・英語・日本語で検索">
+
+    <p class="small">
+      単語を検索したり、登録内容を確認したりできるよ。
+    </p>
+
+    <div id="wordList"></div>
+  </section>
+
+
+  <section class="card">
+    <h2>💾 データ保存・復元</h2>
+
+    <p class="small">
+      バックアップをダウンロードしておくと、
+      データを別の場所に移すときにも役立つよ。
+    </p>
+
+    <button id="exportData">バックアップを保存</button>
+
+    <label for="importFile">バックアップから復元</label>
+    <input id="importFile" type="file" accept=".json,application/json">
+
+    <button id="importData" class="secondary">データを読み込む</button>
+
+    <p id="backupMessage" class="small"></p>
+  </section>
+
+</main>
+
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const WORD_KEY = "eikenWords";
+const STATS_KEY = "eikenQuizStats";
+const TIME_KEY = "eikenStudyTime";
+
+function readJSON(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+let words = readJSON(WORD_KEY, []);
+let stats = readJSON(STATS_KEY, {
+  answered: 0,
+  correct: 0
+});
+let study = readJSON(TIME_KEY, {
+  days: {},
+  startedAt: null
+});
+
+if (!Array.isArray(words)) words = [];
+
+if (!stats || typeof stats !== "object") {
+  stats = { answered: 0, correct: 0 };
+}
+
+if (!Number.isFinite(Number(stats.answered))) stats.answered = 0;
+if (!Number.isFinite(Number(stats.correct))) stats.correct = 0;
+
+if (!study || typeof study !== "object") {
+  study = { days: {}, startedAt: null };
+}
+
+if (!study.days || typeof study.days !== "object") {
+  study.days = {};
+}
+
+if (typeof study.startedAt !== "number") {
+  study.startedAt = null;
+}
+
+
+// 古い形式の単語も可能な範囲で引き継ぐ
+words = words.map((w, i) => {
+  const en = String(w.en ?? w.english ?? w.word ?? "").trim();
+  const ja = String(w.ja ?? w.japanese ?? w.meaning ?? "").trim();
+
+  return {
+    id: w.id ?? (Date.now() + i),
+    num: Number(w.num ?? w.number ?? w.no) || i + 1,
+    en,
+    ja,
+    wrong: Math.max(0, Number(w.wrong) || 0),
+    attempts: Math.max(0, Number(w.attempts) || 0),
+    correct: Math.max(0, Number(w.correct) || 0)
+  };
+}).filter(w => w.en && w.ja);
+
+function saveWords() {
+  localStorage.setItem(WORD_KEY, JSON.stringify(words));
+}
+
+function saveStats() {
+  localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+}
+
+function saveStudy() {
+  localStorage.setItem(TIME_KEY, JSON.stringify(study));
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[c]);
+}
+
+function todayKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function formatDuration(seconds) {
+  seconds = Math.max(0, Math.floor(seconds));
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  if (hours > 0) return `${hours}時間${minutes}分`;
+  return `${minutes}分`;
+}
+
+function recordedSeconds(key) {
+  return Math.max(0, Number(study.days[key]) || 0);
+}
+
+function todaySeconds() {
+  let seconds = recordedSeconds(todayKey());
+
+  if (study.startedAt) {
+    const start = Number(study.startedAt);
+
+    if (Number.isFinite(start)) {
+      const startDate = new Date(start);
+      const now = Date.now();
+
+      if (startDate.toDateString() === new Date().toDateString()) {
+        seconds += Math.max(0, Math.floor((now - start) / 1000));
+      }
+    }
+  }
+
+  return seconds;
+}
+
+function totalSeconds() {
+  return Object.values(study.days).reduce(
+    (sum, value) => sum + Math.max(0, Number(value) || 0),
+    0
+  );
+}
+
+function refreshStats() {
+  $("totalWords").textContent = words.length;
+
+  const accuracy = stats.answered > 0
+    ? Math.round(stats.correct / stats.answered * 100)
+    : 0;
+
+  $("accuracy").textContent = `${accuracy}%`;
+
+  $("wrongCount").textContent =
+    words.filter(w => w.wrong > 0).length;
+
+  $("todayTime").textContent = formatDuration(todaySeconds());
+
+  let total = totalSeconds();
+
+  if (study.startedAt) {
+    total += Math.max(0, Math.floor(
+      (Date.now() - Number(study.startedAt)) / 1000
+    ));
+  }
+
+  $("totalTime").textContent = formatDuration(total);
+
+  $("liveTime").textContent = study.startedAt
+    ? formatDuration(Math.floor((Date.now() - study.startedAt) / 1000))
+    : "停止中";
+
+  const history = Object.entries(study.days)
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .slice(0, 7);
+
+  $("history").innerHTML = history.length
+    ? history.map(([date, seconds]) =>
+        `<div>${escapeHTML(date)}：${formatDuration(seconds)}</div>`
+      ).join("")
+    : "まだ履歴はありません。";
+}
+
+
+// 学習時間
+$("startTimer").addEventListener("click", () => {
+  if (study.startedAt) {
+    alert("すでに学習時間を計測中だよ！");
+    return;
+  }
+
+  study.startedAt = Date.now();
+  saveStudy();
+  refreshStats();
+});
+
+$("stopTimer").addEventListener("click", () => {
+  if (!study.startedAt) {
+    alert("今は計測していないよ。");
+    return;
+  }
+
+  const start = Number(study.startedAt);
+  const now = Date.now();
+  let cursor = start;
+
+  // 日付をまたいだ場合も、日ごとに時間を分けて記録
+  while (cursor < now) {
+    const d = new Date(cursor);
+    const nextMidnight = new Date(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate() + 1
+    ).getTime();
+
+    const end = Math.min(now, nextMidnight);
+    const key = [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, "0"),
+      String(d.getDate()).padStart(2, "0")
+    ].join("-");
+
+    study.days[key] = recordedSeconds(key) +
+      Math.max(0, Math.floor((end - cursor) / 1000));
+
+    cursor = end;
+  }
+
+  study.startedAt = null;
+  saveStudy();
+  refreshStats();
+
+  alert("学習時間を記録したよ！");
+});
+
+
+// 範囲選択肢
+function updateRanges() {
+  const type = $("rangeType").value;
+  const rangeSelect = $("rangeStart");
+
+  rangeSelect.innerHTML = "";
+
+  if (type === "all" || type === "wrong") {
+    rangeSelect.classList.add("hidden");
+    return;
+  }
+
+  rangeSelect.classList.remove("hidden");
+
+  const size = Number(type);
+  const maxNum = words.reduce((max, w) => Math.max(max, w.num), 0);
+
+  const count = Math.max(1, Math.ceil(maxNum / size));
+
+  for (let i = 0; i < count; i++) {
+    const start = i * size + 1;
+    const end = (i + 1) * size;
+
+    const option = document.createElement("option");
+    option.value = start;
+    option.textContent = `${start}〜${end}`;
+    rangeSelect.appendChild(option);
+  }
+}
+
+$("rangeType").addEventListener("change", updateRanges);
+
+
+// 単語登録
+function nextNumber() {
+  return words.reduce((max, w) => Math.max(max, w.num), 0) + 1;
+}
+
+function addOneWord(num, en, ja) {
+  num = Number(num);
+  en = String(en || "").trim();
+  ja = String(ja || "").trim();
+
+  if (!Number.isInteger(num) || num < 1 || !en || !ja) {
+    return false;
+  }
+
+  const existing = words.find(w => w.num === num);
+
+  if (existing) {
+    existing.en = en;
+    existing.ja = ja;
+    return "updated";
+  }
+
+  words.push({
+    id: Date.now() + Math.random(),
+    num,
+    en,
+    ja,
+    wrong: 0,
+    attempts: 0,
+    correct: 0
+  });
+
+  return true;
+}
+
+$("addWord").addEventListener("click", () => {
+  const num = $("wordNumber").value || nextNumber();
+  const en = $("english").value;
+  const ja = $("japanese").value;
+
+  if (!en.trim() || !ja.trim()) {
+    $("addMessage").textContent = "英単語と日本語を入力してね。";
+    return;
+  }
+
+  const result = addOneWord(num, en, ja);
+
+  if (!result) {
+    $("addMessage").textContent =
+      "番号は1以上の整数にしてね。";
+    return;
+  }
+
+  saveWords();
+
+  $("addMessage").textContent =
+    result === "updated"
+      ? "同じ番号の単語を更新したよ！"
+      : "単語を登録したよ！";
+
+  $("wordNumber").value = "";
+  $("english").value = "";
+  $("japanese").value = "";
+
+  renderWordList();
+  updateRanges();
+  refreshStats();
+});
+
+
+// まとめて登録
+$("bulkAdd").addEventListener("click", () => {
+  const lines = $("bulkInput").value.split(/\r?\n/);
+  let added = 0;
+  let skipped = 0;
+  let next = nextNumber();
+
+  for (const line of lines) {
+    const text = line.trim();
+    if (!text) continue;
+
+    const parts = text.split(",").map(x => x.trim());
+
+    let num, en, ja;
+
+    if (parts.length >= 3 && /^\d+$/.test(parts[0])) {
+      num = Number(parts[0]);
+      en = parts[1];
+      ja = parts.slice(2).join(",");
+    } else if (parts.length >= 2) {
+      // 番号なしの「英語,日本語」にも対応
+      num = next++;
+      en = parts[0];
+      ja = parts.slice(1).join(",");
+    } else {
+      skipped++;
+      continue;
+    }
+
+    if (!en || !ja || !Number.isInteger(num) || num < 1) {
+      skipped++;
+      continue;
+    }
+
+    addOneWord(num, en, ja);
+    added++;
+  }
+
+  saveWords();
+
+  $("bulkMessage").textContent =
+    `${added}行を登録・更新したよ。読み取れなかった行：${skipped}行`;
+
+  renderWordList();
+  updateRanges();
+  refreshStats();
+});
+
+
+// テスト
+let quizWords = [];
+let quizIndex = 0;
+let quizCorrect = 0;
+let quizAnswered = false;
+let currentWord = null;
+let currentDirection = "en-ja";
+let currentMode = "choice";
+
+function shuffle(array) {
+  const result = [...array];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result;
+}
+
+function getQuizWords() {
+  const type = $("rangeType").value;
+  let selected = [...words];
+
+  if (type === "wrong") {
+    selected = selected.filter(w => w.wrong > 0);
+  } else if (type !== "all") {
+    const size = Number(type);
+    const start = Number($("rangeStart").value);
+    const end = start + size - 1;
+
+    selected = selected.filter(w => w.num >= start && w.num <= end);
+  }
+
+  return selected;
+}
+
+$("startQuiz").addEventListener("click", () => {
+  if (words.length === 0) {
+    alert("先に英単語を登録してね！");
+    return;
+  }
+
+  quizWords = getQuizWords();
+
+  if (quizWords.length === 0) {
+    alert("この範囲には単語がないよ。番号を確認してね！");
+    return;
+  }
+
+  if ($("questionOrder").value === "random") {
+    quizWords = shuffle(quizWords);
+  } else {
+    quizWords.sort((a, b) => a.num - b.num);
+  }
+
+  quizIndex = 0;
+  quizCorrect = 0;
+  currentDirection = $("direction").value;
+  currentMode = $("testMode").value;
+
+  $("quizArea").style.display = "block";
+  $("quizArea").scrollIntoView({ behavior: "smooth" });
+
+  showQuestion();
+});
+
+function askText(word) {
+  return currentDirection === "en-ja" ? word.en : word.ja;
+}
+
+function answerText(word) {
+  return currentDirection === "en-ja" ? word.ja : word.en;
+}
+
+function showQuestion() {
+  quizAnswered = false;
+  currentWord = quizWords[quizIndex];
+
+  $("questionInfo").textContent =
+    `問題 ${quizIndex + 1} / ${quizWords.length}　｜　単語番号 ${currentWord.num}`;
+
+  $("question").textContent = askText(currentWord);
+  $("feedback").textContent = "";
+  $("nextQuestion").classList.add("hidden");
+  $("choiceArea").innerHTML = "";
+  $("typedAnswer").value = "";
+
+  if (currentMode === "choice") {
+    $("typingArea").classList.add("hidden");
+    $("choiceArea").classList.remove("hidden");
+
+    const correctAnswer = answerText(currentWord);
+
+    const others = shuffle(
+      words.filter(w => w.id !== currentWord.id)
+    );
+
+    const choices = [correctAnswer];
+
+    for (const w of others) {
+      const answer = answerText(w);
+
+      if (!choices.includes(answer)) {
+        choices.push(answer);
+      }
+
+      if (choices.length === 4) break;
+    }
+
+    const shuffledChoices = shuffle(choices);
+
+    shuffledChoices.forEach(choice => {
+      const button = document.createElement("button");
+      button.className = "answerButton";
+      button.textContent = choice;
+
+      button.addEventListener("click", () => {
+        checkAnswer(choice);
+      });
+
+      $("choiceArea").appendChild(button);
+    });
+
+    if (shuffledChoices.length < 4) {
+      $("feedback").textContent =
+        "※ 登録単語が少ないため、選択肢が4つ未満の場合があるよ。";
+    }
+
+  } else {
+    $("choiceArea").classList.add("hidden");
+    $("typingArea").classList.remove("hidden");
+    $("typedAnswer").focus();
+  }
+}
+
+$("submitAnswer").addEventListener("click", () => {
+  checkAnswer($("typedAnswer").value);
+});
+
+$("typedAnswer").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    checkAnswer($("typedAnswer").value);
+  }
+});
+
+function checkAnswer(input) {
+  if (quizAnswered) return;
+
+  const expected = answerText(currentWord);
+  const actual = String(input).trim();
+
+  let correct;
+
+  if (currentDirection === "en-ja") {
+    correct = actual === expected;
+  } else {
+    correct = actual.toLowerCase() === expected.toLowerCase();
+  }
+
+  quizAnswered = true;
+
+  stats.answered++;
+
+  currentWord.attempts++;
+
+  if (correct) {
+    stats.correct++;
+    quizCorrect++;
+    currentWord.correct++;
+  } else {
+    currentWord.wrong++;
+  }
+
+  saveWords();
+  saveStats();
+
+  $("feedback").textContent = correct
+    ? "⭕ 正解！"
+    : `❌ 不正解\n正解：${expected}`;
+
+  $("nextQuestion").textContent =
+    quizIndex + 1 >= quizWords.length
+      ? "結果を見る"
+      : "次の問題へ →";
+
+  $("nextQuestion").classList.remove("hidden");
+
+  refreshStats();
+  renderWordList();
+
+  document.querySelectorAll(".answerButton").forEach(button => {
+    button.disabled = true;
+  });
+}
+
+$("nextQuestion").addEventListener("click", () => {
+  quizIndex++;
+
+  if (quizIndex >= quizWords.length) {
+    finishQuiz();
+  } else {
+    showQuestion();
+  }
+});
+
+function finishQuiz() {
+  $("questionInfo").textContent = "テスト終了！";
+
+  $("question").textContent =
+    `${quizWords.length}問中 ${quizCorrect}問正解！`;
+
+  $("choiceArea").innerHTML = "";
+  $("typingArea").classList.add("hidden");
+  $("feedback").textContent =
+    `今回の正答率：${Math.round(quizCorrect / quizWords.length * 100)}%`;
+
+  $("nextQuestion").classList.add("hidden");
+
+  const close = document.createElement("button");
+  close.textContent = "テスト画面を閉じる";
+  close.className = "secondary";
+  close.onclick = () => {
+    $("quizArea").style.display = "none";
+  };
+
+  $("choiceArea").appendChild(close);
+}
+
+$("endQuiz").addEventListener("click", () => {
+  $("quizArea").style.display = "none";
+});
+
+
+// 単語一覧
+function renderWordList() {
+  const search = $("searchWord").value.trim().toLowerCase();
+
+  const filtered = words
+    .filter(w =>
+      String(w.num).includes(search) ||
+      w.en.toLowerCase().includes(search) ||
+      w.ja.toLowerCase().includes(search)
+    )
+    .sort((a, b) => a.num - b.num);
+
+  if (filtered.length === 0) {
+    $("wordList").innerHTML =
+      '<p class="small">単語がありません。</p>';
+    return;
+  }
+
+  $("wordList").innerHTML = filtered.map(w => `
+    <div class="wordItem">
+      <strong>${w.num}. ${escapeHTML(w.en)}</strong><br>
+      ${escapeHTML(w.ja)}
+      <div class="small">
+        間違い：${w.wrong}回　｜　回答：${w.attempts}回
+      </div>
+      <button class="danger" data-delete="${String(w.id)}">
+        この単語を削除
+      </button>
+    </div>
+  `).join("");
+
+  $("wordList").querySelectorAll("[data-delete]").forEach(button => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.delete;
+
+      if (!confirm("この単語を削除する？")) return;
+
+      words = words.filter(w => String(w.id) !== id);
+
+      saveWords();
+      renderWordList();
+      updateRanges();
+      refreshStats();
+    });
+  });
+}
+
+$("searchWord").addEventListener("input", renderWordList);
+
+
+// バックアップ
+$("exportData").addEventListener("click", () => {
+  const data = {
+    version: 1,
+    words,
+    stats,
+    study
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "eiken-backup.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  $("backupMessage").textContent =
+    "バックアップをダウンロードしたよ！";
+});
+
+$("importData").addEventListener("click", async () => {
+  const file = $("importFile").files[0];
+
+  if (!file) {
+    alert("先にJSONファイルを選んでね！");
+    return;
+  }
+
+  try {
+    const data = JSON.parse(await file.text());
+
+    if (!data || !Array.isArray(data.words)) {
+      throw new Error("単語データが見つかりません。");
+    }
+
+    if (!confirm(
+      "現在の単語・成績・学習時間を、読み込んだデータで置き換える？"
+    )) return;
+
+    words = data.words.map((w, i) => ({
+      id: w.id ?? Date.now() + i,
+      num: Number(w.num ?? w.number) || i + 1,
+      en: String(w.en ?? w.english ?? "").trim(),
+      ja: String(w.ja ?? w.japanese ?? "").trim(),
+      wrong: Number(w.wrong) || 0,
+      attempts: Number(w.attempts) || 0,
+      correct: Number(w.correct) || 0
+    })).filter(w => w.en && w.ja);
+
+    if (data.stats && typeof data.stats === "object") {
+      stats = data.stats;
+    }
+
+    if (data.study && typeof data.study === "object") {
+      study = data.study;
+    }
+
+    saveWords();
+    saveStats();
+    saveStudy();
+
+    renderWordList();
+    updateRanges();
+    refreshStats();
+
+    $("backupMessage").textContent = "データを復元したよ！";
+
+  } catch (error) {
+    alert("読み込みに失敗したよ。正しいバックアップファイルか確認してね。");
+  }
+});
+
+
+// 初期表示
+renderWordList();
+updateRanges();
+refreshStats();
+
+setInterval(refreshStats, 1000);
+</script>
+
+</body>
+</html>
