@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英検パス単クイズ</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Meiryo", sans-serif;
+  background: #f2f5fb;
+  color: #263248;
+}
+
+header {
+  background: #344fc1;
+  color: white;
+  padding: 22px 16px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0 0 8px;
+}
+
+header p {
+  margin: 0;
+}
+
+main {
+  max-width: 900px;
+  margin: auto;
+  padding: 16px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px #0000000c;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+input, select, textarea, button {
+  font: inherit;
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border-radius: 8px;
+}
+
+input, select, textarea {
+  border: 1px solid #cbd2e2;
+  background: white;
+}
+
+textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+button {
+  border: none;
+  background: #405bd0;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.88;
+}
+
+button.secondary {
+  background: #e8ecfb;
+  color: #344fc1;
+}
+
+button.danger {
+  background: #c74444;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stat {
+  background: #f0f3ff;
+  border-radius: 10px;
+  text-align: center;
+  padding: 14px 6px;
+}
+
+.stat strong {
+  display: block;
+  color: #344fc1;
+  font-size: 23px;
+  margin-top: 6px;
+}
+
+.small {
+  font-size: 13px;
+  color: #647087;
+  line-height: 1.7;
+}
+
+#quizArea {
+  display: none;
+}
+
+#question {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  overflow-wrap: anywhere;
+  margin: 28px 0;
+}
+
+#questionInfo {
+  text-align: center;
+  color: #647087;
+}
+
+.answerButton {
+  background: #eef1ff;
+  color: #263248;
+  text-align: left;
+  border: 1px solid #dce2ff;
+  margin-bottom: 8px;
+}
+
+#feedback {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 15px 0;
+  white-space: pre-wrap;
+}
+
+.wordItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e8f0;
+  overflow-wrap: anywhere;
+}
+
+.wordItem button {
+  margin-top: 8px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 550px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  #question {
+    font-size: 25px;
+  }
+}
+
+.lesson-box { margin-top: 16px; padding: 14px; border-radius: 10px; background: #f5f7ff; }
+.lesson-feedback { white-space: pre-line; line-height: 1.7; margin-top: 14px; }
+.lessonChoice { text-align: left; margin-top: 8px; }
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📚 英検パス単クイズ</h1>
+  <p>単語も熟語も、楽しく覚えよう！</p>
+</header>
+
+<main>
+
+  <section class="card">
+    <h2>📊 学習成績</h2>
+
+    <div class="stats">
+      <div class="stat">
+        登録問題数
+        <strong id="totalWords">0</strong>
+      </div>
+
+      <div class="stat">
+        正答率
+        <strong id="accuracy">0%</strong>
+      </div>
+
+      <div class="stat">
+        間違えた問題
+        <strong id="wrongCount">0</strong>
+      </div>
+    </div>
+
+    <p class="small">
+      正答率は、これまでのテストの正解数をもとに計算するよ。
+    </p>
+  </section>
+
+
+  <section class="card">
+    <h2>⏱️ 学習時間</h2>
+
+    <div class="stats">
+      <div class="stat">
+        今日の学習時間
+        <strong id="todayTime">0分</strong>
+      </div>
+
+      <div class="stat">
+        累計学習時間
+        <strong id="totalTime">0分</strong>
+      </div>
+
+      <div class="stat">
+        現在の計測
+        <strong id="liveTime">停止中</strong>
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="startTimer">▶ 学習開始</button>
+      <button id="stopTimer" class="secondary">■ 学習終了</button>
+    </div>
+
+    <p class="small">
+      学習開始を押して、勉強が終わったら学習終了を押そう。
+      計測中にページを閉じても、次に開いたときに続きから計算するよ。
+    </p>
+
+    <h3>最近の学習履歴</h3>
+    <div id="history" class="small">まだ履歴はありません。</div>
+  </section>
+
+
+  <section class="card">
+    <h2>➕ 単語・熟語を登録</h2>
+
+    <label for="entryType">登録する種類</label>
+    <select id="entryType">
+      <option value="word">単語</option>
+      <option value="idiom">熟語</option>
+    </select>
+
+    <label for="wordNumber">パス単の番号</label>
+    <input id="wordNumber" type="number" min="1" placeholder="例：1">
+
+    <label for="english">英単語・熟語</label>
+    <input id="english" placeholder="例：important">
+
+    <label for="japanese">日本語の意味</label>
+    <input id="japanese" placeholder="例：重要な">
+
+    <button id="addWord">登録する</button>
+
+    <p id="addMessage" class="small"></p>
+  </section>
+
+
+  <section class="card">
+    <h2>📝 単語・熟語をまとめて登録</h2>
+
+    <label for="bulkType">まとめて登録する種類</label>
+    <select id="bulkType">
+      <option value="word">単語</option>
+      <option value="idiom">熟語</option>
+    </select>
+
+    <p class="small">
+      1行に1つずつ入力してね。<br>
+      書き方：番号,英単語,日本語<br><br>
+      例：<br>
+      1,important,重要な<br>
+      2,improve,改善する<br>
+      3,experience,経験
+    </p>
+
+    <textarea id="bulkInput"
+      placeholder="1,important,重要な&#10;2,improve,改善する&#10;3,experience,経験"></textarea>
+
+    <button id="bulkAdd">まとめて登録</button>
+
+    <p id="bulkMessage" class="small"></p>
+  </section>
+
+
+  <section class="card">
+    <h2>🎯 テストを設定</h2>
+
+    <label for="quizType">出題する種類</label>
+    <select id="quizType">
+      <option value="word">単語</option>
+      <option value="idiom">熟語</option>
+      <option value="both">単語・熟語の両方</option>
+    </select>
+
+    <label for="rangeType">出題する範囲</label>
+    <select id="rangeType">
+      <option value="100">100語ずつ</option>
+      <option value="50">50語ずつ</option>
+      <option value="all">全単語まとめて</option>
+      <option value="wrong100">間違えた問題だけ（100語ずつ）</option>
+      <option value="wrong50">間違えた問題だけ（50語ずつ）</option>
+      <option value="wrong">間違えた問題だけ（全範囲）</option>
+    </select>
+
+    <label for="rangeStart">テストする番号の範囲</label>
+    <select id="rangeStart">
+      <option value="1">1〜100</option>
+    </select>
+
+    <label for="testMode">出題形式</label>
+    <select id="testMode">
+      <option value="choice">4択テスト</option>
+      <option value="typing">記述テスト</option>
+    </select>
+
+    <label for="direction">出題方向</label>
+    <select id="direction">
+      <option value="en-ja">英語 → 日本語</option>
+      <option value="ja-en">日本語 → 英語</option>
+    </select>
+
+    <label for="questionOrder">問題の順番</label>
+    <select id="questionOrder">
+      <option value="random">シャッフル</option>
+      <option value="number">番号順</option>
+    </select>
+
+    <button id="startQuiz">テスト開始！</button>
+
+    <p id="rangeMessage" class="small"></p>
+  </section>
+
+
+  <section id="quizArea" class="card">
+    <h2>✏️ テスト中</h2>
+
+    <div id="questionInfo"></div>
+    <div id="question"></div>
+
+    <div id="choiceArea"></div>
+
+    <div id="typingArea" class="hidden">
+      <input id="typedAnswer" placeholder="答えを入力">
+      <button id="submitAnswer">回答する</button>
+    </div>
+
+    <div id="feedback"></div>
+
+    <button id="nextQuestion" class="hidden">次の問題へ →</button>
+    <button id="endQuiz" class="secondary">テストを終了する</button>
+  </section>
+
+
+  <section class="card">
+    <h2>📖 登録した単語・熟語</h2>
+
+    <input id="searchWord" placeholder="番号・英語・日本語で検索">
+
+    <p class="small">
+      単語・熟語を検索したり、登録内容を確認したりできるよ。
+    </p>
+
+    <div id="wordList"></div>
+  </section>
+
+
+
+  <section class="card">
+    <h2>📚 英文法・熟語の使い方</h2>
+    <p class="small">単語・熟語の登録データとは別に、英文法と熟語の使い方を練習できるよ。問題はまず収録されている練習問題から出題するよ。</p>
+    <label for="lessonCategory">練習する内容</label>
+    <select id="lessonCategory">
+      <option value="grammar">英文法</option>
+      <option value="idiom">熟語の使い方</option>
+      <option value="both">両方</option>
+    </select>
+    <label for="lessonMode">問題形式</label>
+    <select id="lessonMode">
+      <option value="choice">4択問題</option>
+      <option value="typing">記述問題</option>
+    </select>
+    <label for="lessonOrder">問題の順番</label>
+    <select id="lessonOrder">
+      <option value="random">シャッフル</option>
+      <option value="number">番号順</option>
+      <option value="wrong">間違えた問題だけ</option>
+    </select>
+    <button id="startLesson">文法・熟語の練習を開始</button>
+    <p id="lessonStatus" class="small"></p>
+    <div id="lessonArea" class="lesson-box hidden">
+      <div id="lessonInfo" class="small"></div>
+      <h3 id="lessonQuestion"></h3>
+      <div id="lessonChoices"></div>
+      <div id="lessonTyping" class="hidden">
+        <input id="lessonAnswer" placeholder="答えを入力">
+        <button id="submitLessonAnswer">回答する</button>
+      </div>
+      <div id="lessonFeedback" class="lesson-feedback"></div>
+      <button id="nextLesson" class="hidden">次の問題へ →</button>
+    </div>
+  </section>
+
+
+  <section class="card">
+    <h2>💾 データ保存・復元</h2>
+
+    <p class="small">
+      バックアップをダウンロードしておくと、
+      データを別の場所に移すときにも役立つよ。
+    </p>
+
+    <button id="exportData">バックアップを保存</button>
+
+    <label for="importFile">バックアップから復元</label>
+    <input id="importFile" type="file" accept=".json,application/json">
+
+    <button id="importData" class="secondary">データを読み込む</button>
+
+    <p id="backupMessage" class="small"></p>
+  </section>
+
+</main>
+
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const WORD_KEY = "eikenWords";
+const STATS_KEY = "eikenQuizStats";
+const TIME_KEY = "eikenStudyTime";
+
+function readJSON(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+let words = readJSON(WORD_KEY, []);
+let stats = readJSON(STATS_KEY, {
+  answered: 0,
+  correct: 0
+});
+let study = readJSON(TIME_KEY, {
+  days: {},
+  startedAt: null
+});
+
+if (!Array.isArray(words)) words = [];
+
+if (!stats || typeof stats !== "object") {
+  stats = { answered: 0, correct: 0 };
+}
+
+if (!Number.isFinite(Number(stats.answered))) stats.answered = 0;
+if (!Number.isFinite(Number(stats.correct))) stats.correct = 0;
+
+if (!study || typeof study !== "object") {
+  study = { days: {}, startedAt: null };
+}
+
+if (!study.days || typeof study.days !== "object") {
+  study.days = {};
+}
+
+if (typeof study.startedAt !== "number") {
+  study.startedAt = null;
+}
+
+
+// 古い形式の単語も可能な範囲で引き継ぐ
+words = words.map((w, i) => {
+  const en = String(w.en ?? w.english ?? w.word ?? "").trim();
+  const ja = String(w.ja ?? w.japanese ?? w.meaning ?? "").trim();
+
+  return {
+    id: w.id ?? (Date.now() + i),
+    num: Number(w.num ?? w.number ?? w.no) || i + 1,
+    en,
+    ja,
+    kind: w.kind === "idiom" ? "idiom" : "word",
+    wrong: Math.max(0, Number(w.wrong) || 0),
+    needsReview: typeof w.needsReview === "boolean" ? w.needsReview : (Number(w.wrong) || 0) > 0,
+    attempts: Math.max(0, Number(w.attempts) || 0),
+    correct: Math.max(0, Number(w.correct) || 0)
+  };
+}).filter(w => w.en && w.ja);
+
+function saveWords() {
+  localStorage.setItem(WORD_KEY, JSON.stringify(words));
+}
+
+function saveStats() {
+  localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+}
+
+function saveStudy() {
+  localStorage.setItem(TIME_KEY, JSON.stringify(study));
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[c]);
+}
+
+function todayKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function formatDuration(seconds) {
+  seconds = Math.max(0, Math.floor(seconds));
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  if (hours > 0) return `${hours}時間${minutes}分`;
+  return `${minutes}分`;
+}
+
+function recordedSeconds(key) {
+  return Math.max(0, Number(study.days[key]) || 0);
+}
+
+function todaySeconds() {
+  let seconds = recordedSeconds(todayKey());
+
+  if (study.startedAt) {
+    const start = Number(study.startedAt);
+
+    if (Number.isFinite(start)) {
+      const startDate = new Date(start);
+      const now = Date.now();
+
+      if (startDate.toDateString() === new Date().toDateString()) {
+        seconds += Math.max(0, Math.floor((now - start) / 1000));
+      }
+    }
+  }
+
+  return seconds;
+}
+
+function totalSeconds() {
+  return Object.values(study.days).reduce(
+    (sum, value) => sum + Math.max(0, Number(value) || 0),
+    0
+  );
+}
+
+function refreshStats() {
+  $("totalWords").textContent = words.length;
+
+  const accuracy = stats.answered > 0
+    ? Math.round(stats.correct / stats.answered * 100)
+    : 0;
+
+  $("accuracy").textContent = `${accuracy}%`;
+
+  $("wrongCount").textContent =
+    words.filter(w => w.needsReview).length;
+
+  $("todayTime").textContent = formatDuration(todaySeconds());
+
+  let total = totalSeconds();
+
+  if (study.startedAt) {
+    total += Math.max(0, Math.floor(
+      (Date.now() - Number(study.startedAt)) / 1000
+    ));
+  }
+
+  $("totalTime").textContent = formatDuration(total);
+
+  $("liveTime").textContent = study.startedAt
+    ? formatDuration(Math.floor((Date.now() - study.startedAt) / 1000))
+    : "停止中";
+
+  const history = Object.entries(study.days)
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .slice(0, 7);
+
+  $("history").innerHTML = history.length
+    ? history.map(([date, seconds]) =>
+        `<div>${escapeHTML(date)}：${formatDuration(seconds)}</div>`
+      ).join("")
+    : "まだ履歴はありません。";
+}
+
+
+// 学習時間
+$("startTimer").addEventListener("click", () => {
+  if (study.startedAt) {
+    alert("すでに学習時間を計測中だよ！");
+    return;
+  }
+
+  study.startedAt = Date.now();
+  saveStudy();
+  refreshStats();
+});
+
+$("stopTimer").addEventListener("click", () => {
+  if (!study.startedAt) {
+    alert("今は計測していないよ。");
+    return;
+  }
+
+  const start = Number(study.startedAt);
+  const now = Date.now();
+  let cursor = start;
+
+  // 日付をまたいだ場合も、日ごとに時間を分けて記録
+  while (cursor < now) {
+    const d = new Date(cursor);
+    const nextMidnight = new Date(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate() + 1
+    ).getTime();
+
+    const end = Math.min(now, nextMidnight);
+    const key = [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, "0"),
+      String(d.getDate()).padStart(2, "0")
+    ].join("-");
+
+    study.days[key] = recordedSeconds(key) +
+      Math.max(0, Math.floor((end - cursor) / 1000));
+
+    cursor = end;
+  }
+
+  study.startedAt = null;
+  saveStudy();
+  refreshStats();
+
+  alert("学習時間を記録したよ！");
+});
+
+
+// 範囲選択肢
+function updateRanges() {
+  const type = $("rangeType").value;
+  const rangeSelect = $("rangeStart");
+
+  rangeSelect.innerHTML = "";
+
+  if (type === "all" || type === "wrong") {
+    rangeSelect.classList.add("hidden");
+    return;
+  }
+
+  rangeSelect.classList.remove("hidden");
+
+  const size = type === "wrong100" ? 100 : type === "wrong50" ? 50 : Number(type);
+  const selectedKind = $("quizType") ? $("quizType").value : "word";
+  const rangeWords = words.filter(w => selectedKind === "both" || (w.kind || "word") === selectedKind);
+  const maxNum = rangeWords.reduce((max, w) => Math.max(max, w.num), 0);
+
+  const count = Math.max(1, Math.ceil(maxNum / size));
+
+  for (let i = 0; i < count; i++) {
+    const start = i * size + 1;
+    const end = (i + 1) * size;
+
+    const option = document.createElement("option");
+    option.value = start;
+    option.textContent = `${start}〜${end}`;
+    rangeSelect.appendChild(option);
+  }
+}
+
+$("rangeType").addEventListener("change", updateRanges);
+$("quizType").addEventListener("change", updateRanges);
+
+
+// 単語登録
+function nextNumber(kind = "word") {
+  return words.filter(w => (w.kind || "word") === kind)
+    .reduce((max, w) => Math.max(max, w.num), 0) + 1;
+}
+
+function addOneWord(num, en, ja, kind = "word") {
+  num = Number(num);
+  en = String(en || "").trim();
+  ja = String(ja || "").trim();
+
+  if (!Number.isInteger(num) || num < 1 || !en || !ja) {
+    return false;
+  }
+
+  kind = kind === "idiom" ? "idiom" : "word";
+  const existing = words.find(w => w.num === num && (w.kind || "word") === kind);
+
+  if (existing) {
+    existing.en = en;
+    existing.ja = ja;
+    existing.kind = kind;
+    return "updated";
+  }
+
+  words.push({
+    id: Date.now() + Math.random(),
+    num,
+    en,
+    ja,
+    kind,
+    wrong: 0,
+    attempts: 0,
+    correct: 0
+  });
+
+  return true;
+}
+
+$("addWord").addEventListener("click", () => {
+  const selectedKind = $("entryType").value;
+  const num = $("wordNumber").value || nextNumber(selectedKind);
+  const en = $("english").value;
+  const ja = $("japanese").value;
+
+  if (!en.trim() || !ja.trim()) {
+    $("addMessage").textContent = "英単語と日本語を入力してね。";
+    return;
+  }
+
+  const result = addOneWord(num, en, ja, $("entryType").value);
+
+  if (!result) {
+    $("addMessage").textContent =
+      "番号は1以上の整数にしてね。";
+    return;
+  }
+
+  saveWords();
+
+  $("addMessage").textContent =
+    result === "updated"
+      ? "同じ番号の登録内容を更新したよ！"
+      : "登録したよ！";
+
+  $("wordNumber").value = "";
+  $("english").value = "";
+  $("japanese").value = "";
+
+  renderWordList();
+  updateRanges();
+  refreshStats();
+});
+
+
+// まとめて登録
+$("bulkAdd").addEventListener("click", () => {
+  const lines = $("bulkInput").value.split(/\r?\n/);
+  let added = 0;
+  let skipped = 0;
+  let next = nextNumber($("bulkType").value);
+
+  for (const line of lines) {
+    const text = line.trim();
+    if (!text) continue;
+
+    const parts = text.split(",").map(x => x.trim());
+
+    let num, en, ja;
+
+    if (parts.length >= 3 && /^\d+$/.test(parts[0])) {
+      num = Number(parts[0]);
+      en = parts[1];
+      ja = parts.slice(2).join(",");
+    } else if (parts.length >= 2) {
+      // 番号なしの「英語,日本語」にも対応
+      num = next++;
+      en = parts[0];
+      ja = parts.slice(1).join(",");
+    } else {
+      skipped++;
+      continue;
+    }
+
+    if (!en || !ja || !Number.isInteger(num) || num < 1) {
+      skipped++;
+      continue;
+    }
+
+    addOneWord(num, en, ja, $("bulkType").value);
+    added++;
+  }
+
+  saveWords();
+
+  $("bulkMessage").textContent =
+    `${added}行を登録・更新したよ。読み取れなかった行：${skipped}行`;
+
+  renderWordList();
+  updateRanges();
+  refreshStats();
+});
+
+
+// テスト
+let quizWords = [];
+let quizIndex = 0;
+let quizCorrect = 0;
+let quizAnswered = false;
+let currentWord = null;
+let currentDirection = "en-ja";
+let currentMode = "choice";
+
+function shuffle(array) {
+  const result = [...array];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result;
+}
+
+function getQuizWords() {
+  const type = $("rangeType").value;
+  const quizType = $("quizType").value;
+  let selected = words.filter(w => quizType === "both" || (w.kind || "word") === quizType);
+
+  if (type === "wrong" || type === "wrong100" || type === "wrong50") {
+    selected = selected.filter(w => w.needsReview);
+  }
+
+  if (type !== "all" && type !== "wrong") {
+    const size = type === "wrong100" ? 100 : type === "wrong50" ? 50 : Number(type);
+    const start = Number($("rangeStart").value);
+    const end = start + size - 1;
+    selected = selected.filter(w => w.num >= start && w.num <= end);
+  }
+
+  return selected;
+}
+
+$("startQuiz").addEventListener("click", () => {
+  if (words.length === 0) {
+    alert("先に単語・熟語を登録してね！");
+    return;
+  }
+
+  quizWords = getQuizWords();
+
+  if (quizWords.length === 0) {
+    alert("この範囲には問題がないよ。種類や番号を確認してね！");
+    return;
+  }
+
+  if ($("questionOrder").value === "random") {
+    quizWords = shuffle(quizWords);
+  } else {
+    quizWords.sort((a, b) => a.num - b.num);
+  }
+
+  quizIndex = 0;
+  quizCorrect = 0;
+  currentDirection = $("direction").value;
+  currentMode = $("testMode").value;
+
+  $("quizArea").style.display = "block";
+  $("quizArea").scrollIntoView({ behavior: "smooth" });
+
+  showQuestion();
+});
+
+function askText(word) {
+  return currentDirection === "en-ja" ? word.en : word.ja;
+}
+
+function answerText(word) {
+  return currentDirection === "en-ja" ? word.ja : word.en;
+}
+
+function showQuestion() {
+  quizAnswered = false;
+  currentWord = quizWords[quizIndex];
+
+  $("questionInfo").textContent =
+    `問題 ${quizIndex + 1} / ${quizWords.length}　｜　${(currentWord.kind || "word") === "idiom" ? "熟語" : "単語"}番号 ${currentWord.num}`;
+
+  $("question").textContent = askText(currentWord);
+  $("feedback").textContent = "";
+  $("nextQuestion").classList.add("hidden");
+  $("choiceArea").innerHTML = "";
+  $("typedAnswer").value = "";
+
+  if (currentMode === "choice") {
+    $("typingArea").classList.add("hidden");
+    $("choiceArea").classList.remove("hidden");
+
+    const correctAnswer = answerText(currentWord);
+
+    const others = shuffle(
+      words.filter(w => w.id !== currentWord.id &&
+        (w.kind || "word") === (currentWord.kind || "word"))
+    );
+
+    const choices = [correctAnswer];
+
+    for (const w of others) {
+      const answer = answerText(w);
+
+      if (!choices.includes(answer)) {
+        choices.push(answer);
+      }
+
+      if (choices.length === 4) break;
+    }
+
+    const shuffledChoices = shuffle(choices);
+
+    shuffledChoices.forEach(choice => {
+      const button = document.createElement("button");
+      button.className = "answerButton";
+      button.textContent = choice;
+
+      button.addEventListener("click", () => {
+        checkAnswer(choice);
+      });
+
+      $("choiceArea").appendChild(button);
+    });
+
+    if (shuffledChoices.length < 4) {
+      $("feedback").textContent =
+        "※ 登録単語が少ないため、選択肢が4つ未満の場合があるよ。";
+    }
+
+  } else {
+    $("choiceArea").classList.add("hidden");
+    $("typingArea").classList.remove("hidden");
+    $("typedAnswer").focus();
+  }
+}
+
+$("submitAnswer").addEventListener("click", () => {
+  checkAnswer($("typedAnswer").value);
+});
+
+$("typedAnswer").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    checkAnswer($("typedAnswer").value);
+  }
+});
+
+function checkAnswer(input) {
+  if (quizAnswered) return;
+
+  const expected = answerText(currentWord);
+  const actual = String(input).trim();
+
+  let correct;
+
+  if (currentDirection === "en-ja") {
+    correct = actual === expected;
+  } else {
+    correct = actual.toLowerCase() === expected.toLowerCase();
+  }
+
+  quizAnswered = true;
+
+  stats.answered++;
+
+  currentWord.attempts++;
+
+  const isWrongOnlySession = ["wrong", "wrong100", "wrong50"].includes($("rangeType").value);
+
+  if (correct) {
+    stats.correct++;
+    quizCorrect++;
+    currentWord.correct++;
+    if (isWrongOnlySession) currentWord.needsReview = false;
+  } else {
+    currentWord.wrong++;
+    currentWord.needsReview = true;
+  }
+
+  saveWords();
+  saveStats();
+
+  $("feedback").textContent = correct
+    ? "⭕ 正解！"
+    : `❌ 不正解\n正解：${expected}`;
+
+  $("nextQuestion").textContent =
+    quizIndex + 1 >= quizWords.length
+      ? "結果を見る"
+      : "次の問題へ →";
+
+  $("nextQuestion").classList.remove("hidden");
+
+  refreshStats();
+  renderWordList();
+
+  document.querySelectorAll(".answerButton").forEach(button => {
+    button.disabled = true;
+  });
+}
+
+$("nextQuestion").addEventListener("click", () => {
+  quizIndex++;
+
+  if (quizIndex >= quizWords.length) {
+    finishQuiz();
+  } else {
+    showQuestion();
+  }
+});
+
+function finishQuiz() {
+  $("questionInfo").textContent = "テスト終了！";
+
+  $("question").textContent =
+    `${quizWords.length}問中 ${quizCorrect}問正解！`;
+
+  $("choiceArea").innerHTML = "";
+  $("typingArea").classList.add("hidden");
+  $("feedback").textContent =
+    `今回の正答率：${Math.round(quizCorrect / quizWords.length * 100)}%`;
+
+  $("nextQuestion").classList.add("hidden");
+
+  const close = document.createElement("button");
+  close.textContent = "テスト画面を閉じる";
+  close.className = "secondary";
+  close.onclick = () => {
+    $("quizArea").style.display = "none";
+  };
+
+  $("choiceArea").appendChild(close);
+}
+
+$("endQuiz").addEventListener("click", () => {
+  $("quizArea").style.display = "none";
+});
+
+
+// 単語一覧
+function renderWordList() {
+  const search = $("searchWord").value.trim().toLowerCase();
+
+  const filtered = words
+    .filter(w =>
+      String(w.num).includes(search) ||
+      ((w.kind || "word") === "idiom" ? "熟語" : "単語").includes(search) ||
+      w.en.toLowerCase().includes(search) ||
+      w.ja.toLowerCase().includes(search)
+    )
+    .sort((a, b) => a.num - b.num);
+
+  if (filtered.length === 0) {
+    $("wordList").innerHTML =
+      '<p class="small">登録内容がありません。</p>';
+    return;
+  }
+
+  $("wordList").innerHTML = filtered.map(w => `
+    <div class="wordItem">
+      <strong>${(w.kind || "word") === "idiom" ? "【熟語】" : "【単語】"} ${w.num}. ${escapeHTML(w.en)}</strong><br>
+      ${escapeHTML(w.ja)}
+      <div class="small">
+        復習リスト：${w.needsReview ? "対象" : "対象外"}　｜　間違い：${w.wrong}回　｜　回答：${w.attempts}回
+      </div>
+      <button class="danger" data-delete="${String(w.id)}">
+        この登録を削除
+      </button>
+    </div>
+  `).join("");
+
+  $("wordList").querySelectorAll("[data-delete]").forEach(button => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.delete;
+
+      if (!confirm("この登録を削除する？")) return;
+
+      words = words.filter(w => String(w.id) !== id);
+
+      saveWords();
+      renderWordList();
+      updateRanges();
+      refreshStats();
+    });
+  });
+}
+
+$("searchWord").addEventListener("input", renderWordList);
+
+$("entryType").addEventListener("change", () => {
+  $("english").placeholder = $("entryType").value === "idiom" ? "例：look forward to" : "例：important";
+  $("japanese").placeholder = $("entryType").value === "idiom" ? "例：〜を楽しみに待つ" : "例：重要な";
+});
+
+
+// バックアップ
+$("exportData").addEventListener("click", () => {
+  const data = {
+    version: 3,
+    words,
+    stats,
+    study
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "eiken-backup.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  $("backupMessage").textContent =
+    "バックアップをダウンロードしたよ！";
+});
+
+$("importData").addEventListener("click", async () => {
+  const file = $("importFile").files[0];
+
+  if (!file) {
+    alert("先にJSONファイルを選んでね！");
+    return;
+  }
+
+  try {
+    const data = JSON.parse(await file.text());
+
+    if (!data || !Array.isArray(data.words)) {
+      throw new Error("単語データが見つかりません。");
+    }
+
+    if (!confirm(
+      "現在の単語・成績・学習時間を、読み込んだデータで置き換える？"
+    )) return;
+
+    words = data.words.map((w, i) => ({
+      id: w.id ?? Date.now() + i,
+      num: Number(w.num ?? w.number) || i + 1,
+      en: String(w.en ?? w.english ?? "").trim(),
+      ja: String(w.ja ?? w.japanese ?? "").trim(),
+      kind: w.kind === "idiom" ? "idiom" : "word",
+      wrong: Number(w.wrong) || 0,
+      needsReview: typeof w.needsReview === "boolean" ? w.needsReview : (Number(w.wrong) || 0) > 0,
+      attempts: Number(w.attempts) || 0,
+      correct: Number(w.correct) || 0
+    })).filter(w => w.en && w.ja);
+
+    if (data.stats && typeof data.stats === "object") {
+      stats = data.stats;
+    }
+
+    if (data.study && typeof data.study === "object") {
+      study = data.study;
+    }
+
+    saveWords();
+    saveStats();
+    saveStudy();
+
+    renderWordList();
+    updateRanges();
+    refreshStats();
+
+    $("backupMessage").textContent = "データを復元したよ！";
+
+  } catch (error) {
+    alert("読み込みに失敗したよ。正しいバックアップファイルか確認してね。");
+  }
+});
+
+
+
+// 英文法・熟語の使い方ミニレッスン（最初から入っている練習問題）
+const lessonQuestions = [
+  {id:"g1",cat:"grammar",q:"I enjoy ____ books in my free time.",choices:["read","reading","to read","reads"],a:"reading",ex:"enjoy の後ろは動名詞（動詞 + ing）を使うよ。"},
+  {id:"g2",cat:"grammar",q:"She decided ____ a new club.",choices:["join","joining","to join","joined"],a:"to join",ex:"decide の後ろは to + 動詞の原形（不定詞）が基本だよ。"},
+  {id:"g3",cat:"grammar",q:"This is the boy ____ helped me yesterday.",choices:["which","who","where","when"],a:"who",ex:"人を説明し、後ろの文で主語になる関係代名詞は who だよ。"},
+  {id:"g4",cat:"grammar",q:"If it ____ tomorrow, we will stay home.",choices:["rain","rains","will rain","rained"],a:"rains",ex:"未来のことを表す if 節では、ふつう現在形を使うよ。"},
+  {id:"g5",cat:"grammar",q:"My sister has lived here ____ 2020.",choices:["for","since","during","from"],a:"since",ex:"since は始まった時点（since 2020）、for は期間（for six years）に使うよ。"},
+  {id:"g6",cat:"grammar",q:"The window ____ by Tom yesterday.",choices:["breaks","broke","was broken","is breaking"],a:"was broken",ex:"窓は『割られた』側なので受け身。yesterday だから was + 過去分詞だよ。"},
+  {id:"g7",cat:"grammar",q:"I was so tired that I ____ asleep quickly.",choices:["fall","fell","fallen","falling"],a:"fell",ex:"過去の出来事なので fall の過去形 fell を使うよ。"},
+  {id:"g8",cat:"grammar",q:"You ____ use your phone during the test. It is not allowed.",choices:["must","must not","don't have to","could"],a:"must not",ex:"禁止は must not。don't have to は『する必要がない』という意味だよ。"},
+  {id:"g9",cat:"grammar",q:"This bag is ____ than that one.",choices:["cheap","cheapest","cheaper","more cheap"],a:"cheaper",ex:"短い形容詞 cheap の比較級は cheaper だよ。"},
+  {id:"g10",cat:"grammar",q:"I have a friend ____ can speak three languages.",choices:["whose","who","where","what"],a:"who",ex:"人が後ろの文の主語になるので who が合うよ。"},
+  {id:"g11",cat:"grammar",q:"My mother made me ____ my room.",choices:["clean","to clean","cleaned","cleaning"],a:"clean",ex:"make + 人 + 動詞の原形で『人に〜させる』だよ。"},
+  {id:"g12",cat:"grammar",q:"He is interested in ____ about space.",choices:["learn","to learn","learning","learned"],a:"learning",ex:"前置詞 in の後ろに動詞を置くときは動名詞 learning にするよ。"},
+  {id:"g13",cat:"grammar",q:"When I arrived at the station, the train ____ already left.",choices:["has","had","have","was"],a:"had",ex:"駅に着いた時点より前に出発していたので過去完了 had + 過去分詞だよ。"},
+  {id:"g14",cat:"grammar",q:"There ____ many people at the festival last night.",choices:["is","are","was","were"],a:"were",ex:"many people は複数で、last night は過去なので were だよ。"},
+  {id:"g15",cat:"grammar",q:"I don't know ____ he is absent today.",choices:["why","who","which","whose"],a:"why",ex:"『なぜ休んでいるのか』という理由を表すので why が合うよ。"},
+  {id:"i1",cat:"idiom",q:"I ran out of milk, so I went to the store. “ran out of” の意味は？",choices:["買いに行った","使い切った・なくなった","探し始めた","持ち帰った"],a:"使い切った・なくなった",ex:"run out of ～ は『～を使い切る／～がなくなる』。例：We ran out of time.（時間がなくなった）"},
+  {id:"i2",cat:"idiom",q:"Please look after my dog while I'm away. “look after” の意味は？",choices:["世話をする","見下ろす","探し出す","見送る"],a:"世話をする",ex:"look after ～ は『～の世話をする』。take care of と近い意味だよ。"},
+  {id:"i3",cat:"idiom",q:"We put off the meeting until Friday. “put off” の意味は？",choices:["始める","延期する","参加する","終える"],a:"延期する",ex:"put off ～ は『～を延期する』。put off doing で『～するのを延期する』とも言うよ。"},
+  {id:"i4",cat:"idiom",q:"I came across an old photo in my desk. “came across” の意味は？",choices:["偶然見つけた","片づけた","書き写した","持ち出した"],a:"偶然見つけた",ex:"come across ～ は『～に偶然出会う／偶然見つける』。"},
+  {id:"i5",cat:"idiom",q:"Could you fill out this form? “fill out” の意味は？",choices:["提出する","記入する","切り取る","読み上げる"],a:"記入する",ex:"fill out a form は『用紙に記入する』。fill in も同じように使われるよ。"},
+  {id:"i6",cat:"idiom",q:"The game was called off because of the rain. “called off” の意味は？",choices:["中止された","延期された","再開された","宣伝された"],a:"中止された",ex:"call off ～ は『～を中止する』。予定を後の日にする『延期』とは区別しよう。"},
+  {id:"i7",cat:"idiom",q:"I'm looking forward to seeing you. この文の意味に近いのは？",choices:["会うのを楽しみにしている","会うのを忘れている","会うのを避けている","会うのを急いでいる"],a:"会うのを楽しみにしている",ex:"look forward to ～ は『～を楽しみにする』。to は前置詞なので、後ろは名詞か動名詞（seeing）だよ。"},
+  {id:"i8",cat:"idiom",q:"He gave up smoking last year. “gave up” の意味は？",choices:["始めた","やめた","続けた","勧めた"],a:"やめた",ex:"give up ～ は『～をあきらめる／やめる』。give up doing の形もよく使うよ。"},
+  {id:"i9",cat:"idiom",q:"We have to deal with this problem soon. “deal with” の意味は？",choices:["対処する","賛成する","気づく","逃げる"],a:"対処する",ex:"deal with ～ は『～に対処する／～を扱う』。"},
+  {id:"i10",cat:"idiom",q:"I found out the truth yesterday. “found out” の意味は？",choices:["隠した","調べて分かった","疑った","忘れた"],a:"調べて分かった",ex:"find out ～ は『～を知る／調べて分かる』。"},
+  {id:"i11",cat:"idiom",q:"She takes after her mother. “takes after” の意味は？",choices:["母親の世話をする","母親に似ている","母親を追いかける","母親を手伝う"],a:"母親に似ている",ex:"take after 人 は『（性格・見た目などが）人に似ている』。"},
+  {id:"i12",cat:"idiom",q:"Please turn down the TV. “turn down” の意味は？",choices:["音量を下げる","電源を入れる","録画する","持ち上げる"],a:"音量を下げる",ex:"turn down は『音量などを下げる』。文脈によって『申し出を断る』という意味もあるよ。"},
+  {id:"i13",cat:"idiom",q:"I picked up some English phrases from the movie. “picked up” の意味は？",choices:["拾い上げた","身につけた・覚えた","書き直した","聞き流した"],a:"身につけた・覚えた",ex:"pick up は『拾う』のほか、言語や技能を『自然に身につける』という意味もあるよ。"},
+  {id:"i14",cat:"idiom",q:"You should get along with your classmates. “get along with” の意味は？",choices:["仲良くする","競争する","追いつく","連絡を取る"],a:"仲良くする",ex:"get along with 人 は『人とうまくやっていく／仲良くする』。"},
+  {id:"i15",cat:"idiom",q:"The bus broke down on the way to school. “broke down” の意味は？",choices:["道を間違えた","故障した","急停止した","遅れて到着した"],a:"故障した",ex:"break down は機械や乗り物が『故障する』という意味でよく使うよ。"}
+];
+let lessonQueue = [], lessonIndex = 0, lessonAnswered = false, lessonWrong = new Set(), lessonCurrent = null, lessonModeNow = "choice";
+
+$("startLesson").addEventListener("click", () => {
+  const category = $("lessonCategory").value;
+  lessonQueue = lessonQuestions.filter(q => category === "both" || q.cat === category);
+  if ($("lessonOrder").value === "wrong") lessonQueue = lessonQueue.filter(q => lessonWrong.has(q.id));
+  if (!lessonQueue.length) {
+    $("lessonStatus").textContent = $("lessonOrder").value === "wrong" ? "まだ間違えた問題はないよ。まずは通常の問題に挑戦してね！" : "問題が見つからなかったよ。";
+    $("lessonArea").classList.add("hidden");
+    return;
+  }
+  if ($("lessonOrder").value === "random") lessonQueue = shuffle(lessonQueue);
+  lessonIndex = 0;
+  lessonModeNow = $("lessonMode").value;
+  $("lessonStatus").textContent = `${lessonQueue.length}問を出題するよ。`;
+  $("lessonArea").classList.remove("hidden");
+  showLessonQuestion();
+  $("lessonArea").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+function showLessonQuestion() {
+  lessonAnswered = false;
+  lessonCurrent = lessonQueue[lessonIndex];
+  $("lessonInfo").textContent = `問題 ${lessonIndex + 1} / ${lessonQueue.length}｜${lessonCurrent.cat === "grammar" ? "英文法" : "熟語の使い方"}`;
+  $("lessonQuestion").textContent = lessonCurrent.q;
+  $("lessonFeedback").textContent = "";
+  $("lessonChoices").innerHTML = "";
+  $("lessonAnswer").value = "";
+  $("nextLesson").classList.add("hidden");
+  if (lessonModeNow === "choice") {
+    $("lessonTyping").classList.add("hidden");
+    const options = shuffle([...lessonCurrent.choices]);
+    options.forEach(option => {
+      const b = document.createElement("button");
+      b.className = "lessonChoice";
+      b.textContent = option;
+      b.addEventListener("click", () => answerLesson(option));
+      $("lessonChoices").appendChild(b);
+    });
+  } else {
+    $("lessonTyping").classList.remove("hidden");
+    $("lessonChoices").innerHTML = `<p class="small">答えを入力してね。熟語の意味問題では、日本語の意味を入力するよ。</p>`;
+    $("lessonAnswer").focus();
+  }
+}
+$("submitLessonAnswer").addEventListener("click", () => answerLesson($("lessonAnswer").value));
+$("lessonAnswer").addEventListener("keydown", e => { if (e.key === "Enter") answerLesson($("lessonAnswer").value); });
+function answerLesson(value) {
+  if (lessonAnswered || !lessonCurrent) return;
+  const actual = String(value || "").trim().toLowerCase();
+  const expected = lessonCurrent.a.toLowerCase();
+  const correct = actual === expected;
+  lessonAnswered = true;
+  if (!correct) lessonWrong.add(lessonCurrent.id);
+  else lessonWrong.delete(lessonCurrent.id);
+  $("lessonFeedback").textContent = `${correct ? "⭕ 正解！" : `❌ 不正解\n正解：${lessonCurrent.a}`}\n\n解説：${lessonCurrent.ex}`;
+  document.querySelectorAll(".lessonChoice").forEach(b => { b.disabled = true; });
+  $("nextLesson").textContent = lessonIndex + 1 >= lessonQueue.length ? "練習終了" : "次の問題へ →";
+  $("nextLesson").classList.remove("hidden");
+}
+$("nextLesson").addEventListener("click", () => {
+  lessonIndex++;
+  if (lessonIndex >= lessonQueue.length) {
+    $("lessonQuestion").textContent = "練習終了！";
+    $("lessonInfo").textContent = "";
+    $("lessonChoices").innerHTML = "";
+    $("lessonTyping").classList.add("hidden");
+    $("lessonFeedback").textContent = "おつかれさま！間違えた問題だけの復習もできるよ。";
+    $("nextLesson").classList.add("hidden");
+  } else showLessonQuestion();
+});
+
+
+// 初期表示
+renderWordList();
+updateRanges();
+refreshStats();
+
+setInterval(refreshStats, 1000);
+</script>
+
+</body>
+</html>
